@@ -1,51 +1,52 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import api from './services/api';
 
-function App() {
-  const [voterId, setVoterId] = useState('');
-  const [candidate, setCandidate] = useState('');
-  const [message, setMessage] = useState('');
-  const [blockchain, setBlockchain] = useState([]);
+export default function App() {
+    const [voter, setVoter] = useState('');
+    const [candidate, setCandidate] = useState('');
+    const [results, setResults] = useState({});
+    const [message, setMessage] = useState('');
 
-  const handleVote = async () => {
-    try {
-      const response = await axios.post('http://localhost:5000/vote', {
-        voterId,
-        candidate
-      });
-      setMessage('Vote registered!');
-      setBlockchain(response.data.blockchain);
-    } catch (error) {
-      setMessage('Error: Could not register vote.');
-    }
-  };
+    const handleVote = async () => {
+        try {
+            const response = await api.post('/vote', { voter, candidate });
+            setMessage(response.data.message);
+            fetchResults();
+        } catch (err) {
+            setMessage(err.response?.data?.error || 'Erro ao votar.');
+        }
+    };
 
-  const handleVoterIdChange = (e) => setVoterId(e.target.value);
-  const handleCandidateChange = (e) => setCandidate(e.target.value);
+    const fetchResults = async () => {
+        const response = await api.get('/results');
+        setResults(response.data);
+    };
 
-  return (
-      <div className="App">
-        <h1>Blockchain Voting System</h1>
-        <div>
-          <input
-              type="text"
-              placeholder="Enter your voter ID"
-              value={voterId}
-              onChange={handleVoterIdChange}
-          />
-          <input
-              type="text"
-              placeholder="Enter candidate name"
-              value={candidate}
-              onChange={handleCandidateChange}
-          />
-          <button onClick={handleVote}>Vote</button>
+    useEffect(() => {
+        fetchResults();
+    }, []);
+
+    return (
+        <div style={{ padding: 20 }}>
+            <h1>Votação Descentralizada</h1>
+            <input
+                placeholder="Seu nome ou ID"
+                value={voter}
+                onChange={e => setVoter(e.target.value)}
+            />
+            <input
+                placeholder="Candidato"
+                value={candidate}
+                onChange={e => setCandidate(e.target.value)}
+            />
+            <button onClick={handleVote}>Votar</button>
+            <p>{message}</p>
+            <h2>Resultados:</h2>
+            <ul>
+                {Object.entries(results).map(([name, count]) => (
+                    <li key={name}>{name}: {count} voto(s)</li>
+                ))}
+            </ul>
         </div>
-        <p>{message}</p>
-        <h2>Blockchain</h2>
-        <pre>{JSON.stringify(blockchain, null, 2)}</pre>
-      </div>
-  );
+    );
 }
-
-export default App;

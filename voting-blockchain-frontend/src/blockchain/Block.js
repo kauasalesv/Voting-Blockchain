@@ -1,21 +1,26 @@
 const crypto = require('crypto');
 
 class Block {
-    constructor(index, timestamp, previousHash, data, hash = '') {
+    constructor(index, timestamp, data, previousHash = '', nonce = 0) {
         this.index = index;
         this.timestamp = timestamp;
-        this.previousHash = previousHash;
         this.data = data;
-        this.hash = hash || this.calculateHash();
+        this.previousHash = previousHash;
+        this.nonce = nonce;
+        this.hash = this.calculateHash();
     }
 
     calculateHash() {
-        const hashData = `${this.index}${this.timestamp}${this.previousHash}${JSON.stringify(this.data)}`;
-        return crypto.createHash('sha256').update(hashData).digest('hex');
+        return crypto.createHash('sha256')
+            .update(this.index + this.timestamp + JSON.stringify(this.data) + this.previousHash + this.nonce)
+            .digest('hex');
     }
 
-    static createGenesisBlock() {
-        return new Block(0, Date.now(), "0", { vote: "initial" });
+    mineBlock(difficulty) {
+        while (!this.hash.startsWith('0'.repeat(difficulty))) {
+            this.nonce++;
+            this.hash = this.calculateHash();
+        }
     }
 }
 
