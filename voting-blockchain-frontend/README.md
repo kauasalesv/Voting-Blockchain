@@ -1,3 +1,8 @@
+// Instalar todas as dependências utilizadas no projeto
+
+    cd voting-blockchain-frontend
+    npm install
+
 // RODAR primeiro NÓ:
     // Backend 4000
 

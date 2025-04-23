@@ -31,10 +31,11 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;&lt;unknown&gt;&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/CallidusUser/Desktop/Voting Blockchain/voting-blockchain-frontend/src/services&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/CallidusUser/Documents/GitHub/Pense_Bem&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -55,6 +56,19 @@
       <recent name="C:\Users\CallidusUser\Desktop\Voting Blockchain\backend" />
     </key>
   </component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="Voting Blockchain" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="Voting Blockchain" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -71,7 +85,11 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744913026510</updated>
-      <workItem from="1744913027911" duration="28793000" />
+      <workItem from="1744913027911" duration="29634000" />
+      <workItem from="1745431407752" duration="43000" />
+      <workItem from="1745441779417" duration="19000" />
+      <workItem from="1745441806152" duration="15000" />
+      <workItem from="1745441844666" duration="1819000" />
     </task>
     <servers />
   </component>
