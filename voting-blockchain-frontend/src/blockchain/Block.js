@@ -8,6 +8,18 @@ class Block {
         this.previousHash = previousHash;
         this.nonce = nonce;
         this.hash = this.calculateHash();
+
+        // Garante valores fixos para o bloco genesis
+        if (this.isGenesis()) {
+            this.timestamp = "2023-01-01T00:00:00.000Z";
+            this.data = "Genesis Block";
+            this.previousHash = "0";
+            this.hash = this.calculateHash();
+        }
+    }
+
+    isGenesis() {
+        return this.index === 0 && this.previousHash === '';
     }
 
     calculateHash() {

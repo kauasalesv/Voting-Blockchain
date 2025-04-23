@@ -90,6 +90,11 @@
   color: #2e7d32;
 }
 
+.message.warning {
+  background-color: #f3f5e8;
+  color: #7d762e;
+}
+
 /* Resultados */
 .results-title {
   text-align: center;

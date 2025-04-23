@@ -7,7 +7,7 @@ class Blockchain {
     }
 
     createGenesisBlock() {
-        return new Block(0, Date.now(), 'Genesis Block', '0');
+        return new Block(0, "2023-01-01T00:00:00.000Z", "Genesis Block", "0", 0);
     }
 
     getLatestBlock() {
@@ -15,8 +15,12 @@ class Blockchain {
     }
 
     addBlock(data) {
-        const previousBlock = this.getLatestBlock();
-        const newBlock = new Block(this.chain.length, Date.now(), data, previousBlock.hash);
+        const newBlock = new Block(
+            this.chain.length,
+            new Date().toISOString(),
+            data,
+            this.getLatestBlock().hash
+        );
         newBlock.mineBlock(this.difficulty);
         this.chain.push(newBlock);
         return newBlock;
@@ -24,10 +28,14 @@ class Blockchain {
 
     isValid() {
         for (let i = 1; i < this.chain.length; i++) {
-            const curr = this.chain[i];
-            const prev = this.chain[i - 1];
+            const current = this.chain[i];
+            const previous = this.chain[i - 1];
 
-            if (curr.hash !== curr.calculateHash() || curr.previousHash !== prev.hash) {
+            if (current.hash !== current.calculateHash()) {
+                return false;
+            }
+
+            if (current.previousHash !== previous.hash) {
                 return false;
             }
         }

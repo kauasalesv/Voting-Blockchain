@@ -18,27 +18,37 @@ export default function App() {
 
         if (!cleanCPF) {
             setMessage('Por favor, insira seu CPF.');
+            clearMessageAfterDelay();
             return;
         }
 
         if (cleanCPF.length !== 11) {
             setMessage('CPF deve ter 11 dígitos.');
+            clearMessageAfterDelay();
             return;
         }
 
         setIsLoading(true);
         try {
             const response = await api.post('/vote', {
-                voter: cleanCPF, // Envia sem máscara
+                voter: cleanCPF,
                 candidate
             });
             setMessage(response.data.message);
+            clearMessageAfterDelay();
             await fetchResults();
         } catch (err) {
             setMessage(err.response?.data?.error || 'Erro ao votar.');
+            clearMessageAfterDelay();
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const clearMessageAfterDelay = () => {
+        setTimeout(() => {
+            setMessage('');
+        }, 4000); // 4 segundos
     };
 
     const fetchResults = async () => {
@@ -51,8 +61,13 @@ export default function App() {
     };
 
     useEffect(() => {
-        fetchResults();
+        fetchResults(); // Busca inicial
+
+        const interval = setInterval(fetchResults, 1000); // Busca a cada 1 segundo
+
+        return () => clearInterval(interval); // Limpa o intervalo ao desmontar
     }, []);
+
 
     return (
         <div className="app-container">
@@ -97,7 +112,11 @@ export default function App() {
             </div>
 
             {message && (
-                <div className={`message ${message.includes('Erro') ? 'error' : 'success'}`}>
+                <div className={`message ${
+                    message.toLowerCase().includes('erro') ? 'error' :
+                        message.toLowerCase().includes('por favor') || message.toLowerCase().includes('já') ? 'warning' :
+                            'success'
+                }`}>
                     {message}
                 </div>
             )}

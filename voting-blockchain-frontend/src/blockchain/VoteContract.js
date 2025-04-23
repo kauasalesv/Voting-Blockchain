@@ -1,8 +1,16 @@
 class VoteContract {
-    constructor() {
+    constructor(blockchain = [], db = null) {
+        // Verifica se blockchain é um array válido
+        if (!Array.isArray(blockchain)) {
+            throw new Error('O parâmetro blockchain deve ser um array');
+        }
+
         this.votes = {};
         this.candidates = ['Alice', 'Bob', 'Carol'];
         this.usedCPFs = new Set();
+        this.blockchain = blockchain;
+        this.db = db; // Banco de dados para armazenamento persistente, se necessário.
+        this._processBlockchain(); // Processa a blockchain uma vez no início
     }
 
     // Validação matemática do CPF
@@ -27,6 +35,49 @@ class VoteContract {
         return remainder === parseInt(cpf[10]);
     }
 
+    // Processa a blockchain existente uma vez (otimização)
+    _processBlockchain() {
+        const processedVotes = [];
+
+        // Processa blocos em lotes para evitar travamentos em grandes volumes
+        this.blockchain.forEach(block => {
+            if (block.index === 0) return; // Ignora o bloco genesis
+
+            const voteData = block.data;
+            if (this._isValidVoteData(voteData)) {
+                this._addVoteToIndexes(voteData);
+                processedVotes.push(voteData);
+            }
+        });
+
+        // Armazena votos de forma eficiente, se necessário, em um banco de dados
+        if (this.db) {
+            this.db.saveVotes(processedVotes); // Exemplo de como armazenar votos em um banco de dados
+        }
+    }
+
+    // Verifica se os dados do voto são válidos
+    _isValidVoteData(voteData) {
+        return voteData &&
+            voteData.voter &&
+            voteData.candidate &&
+            this._validateCPF(voteData.voter) &&
+            this.candidates.includes(voteData.candidate);
+    }
+
+    // Registra o voto
+    _addVoteToIndexes(voteData) {
+        if (this.usedCPFs.has(voteData.voter)) {
+            // Caso o CPF já tenha votado
+            return;
+        }
+
+        // Registra o voto
+        this.usedCPFs.add(voteData.voter);
+        this.votes[voteData.voter] = voteData.candidate;
+    }
+
+    // Função para registrar um novo voto
     vote(voterCPF, candidate) {
         // Valida o formato do CPF
         if (!this._validateCPF(voterCPF)) {
@@ -50,6 +101,7 @@ class VoteContract {
         return { success: true, message: 'Voto registrado com sucesso' };
     }
 
+    // Retorna os resultados da votação
     getResults() {
         const count = this.candidates.reduce((acc, candidate) => {
             acc[candidate] = 0;
@@ -63,10 +115,12 @@ class VoteContract {
         return count;
     }
 
+    // Retorna todos os votos
     getVotes() {
         return this.votes;
     }
 
+    // Verifica se um eleitor já votou
     hasVoted(voterCPF) {
         return this.usedCPFs.has(voterCPF);
     }
